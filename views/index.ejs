@@ -3,62 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= titulo %></title>
-    <!-- CSS desde la carpeta public/css/ -->
-    <link rel="stylesheet" href="css/style.css">
+    <title>API Calculadora</title>
+    <!-- Ruta correcta para CSS dentro de la carpeta css -->
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>🧮 <%= titulo %></h1>
-        <p>Ingresa dos números para sumarlos usando la API</p>
-        
-        <div class="form-group">
-            <div class="input-group">
-                <label for="numero1">Número 1:</label>
-                <input type="number" id="numero1" placeholder="Ej: 5" step="any" required>
-            </div>
-            
-            <div class="input-group">
-                <label for="numero2">Número 2:</label>
-                <input type="number" id="numero2" placeholder="Ej: 3" step="any" required>
-            </div>
-            
-            <button id="btnSumar">
-                <span>➕</span> Sumar
-            </button>
+    <div class="app-wrapper">
+        <h1>🧮 API · Calculadora</h1>
+
+        <!-- Navegación por pestañas -->
+        <div class="page-tabs">
+            <button class="tab-btn active" data-page="page1">➕ Operaciones</button>
+            <button class="tab-btn" data-page="page2">📐 Áreas</button>
         </div>
-        
-        <!-- Mostrar resultado si existe -->
-        <% if (resultado) { %>
-        <div id="resultado" class="resultado exito">
-            <div style="text-align: center; width: 100%;">
-                <p style="font-size: 14px; color: #155724; margin-bottom: 5px;">✅ La suma es:</p>
-                <div style="font-size: 24px; margin-top: 5px;">
-                    <strong><%= resultado.numero1 %></strong> + <strong><%= resultado.numero2 %></strong> = 
-                    <strong style="color: #28a745; font-size: 32px;"><%= resultado.resultado %></strong>
+
+        <!-- ========== PÁGINA 1: OPERACIONES ========== -->
+        <div id="page1" class="page active-page">
+            <div class="section-title">⚡ Aritmética básica</div>
+            <div class="card-grid">
+                <!-- Suma -->
+                <div class="card">
+                    <h3>➕ Suma</h3>
+                    <div class="input-group">
+                        <label>Número 1</label>
+                        <input type="number" id="sum1" value="8" step="any">
+                        <label>Número 2</label>
+                        <input type="number" id="sum2" value="3" step="any">
+                    </div>
+                    <button class="btn btn-primary" id="btnSum">Calcular</button>
+                    <div class="result-box" id="resultSum">Resultado: <span>—</span></div>
+                </div>
+
+                <!-- Resta -->
+                <div class="card">
+                    <h3>➖ Resta</h3>
+                    <div class="input-group">
+                        <label>Número 1</label>
+                        <input type="number" id="sub1" value="15" step="any">
+                        <label>Número 2</label>
+                        <input type="number" id="sub2" value="7" step="any">
+                    </div>
+                    <button class="btn btn-primary" id="btnSub">Calcular</button>
+                    <div class="result-box" id="resultSub">Resultado: <span>—</span></div>
+                </div>
+
+                <!-- Multiplicación -->
+                <div class="card">
+                    <h3>✖️ Multiplicación</h3>
+                    <div class="input-group">
+                        <label>Número 1</label>
+                        <input type="number" id="mul1" value="6" step="any">
+                        <label>Número 2</label>
+                        <input type="number" id="mul2" value="9" step="any">
+                    </div>
+                    <button class="btn btn-primary" id="btnMul">Calcular</button>
+                    <div class="result-box" id="resultMul">Resultado: <span>—</span></div>
+                </div>
+
+                <!-- División -->
+                <div class="card">
+                    <h3>➗ División</h3>
+                    <div class="input-group">
+                        <label>Dividendo</label>
+                        <input type="number" id="div1" value="20" step="any">
+                        <label>Divisor</label>
+                        <input type="number" id="div2" value="4" step="any">
+                    </div>
+                    <button class="btn btn-primary" id="btnDiv">Calcular</button>
+                    <div class="result-box" id="resultDiv">Resultado: <span>—</span></div>
                 </div>
             </div>
         </div>
-        <% } else { %>
-        <div id="resultado" class="resultado">
-            <p>El resultado aparecerá aquí</p>
-        </div>
-        <% } %>
-        
-        <!-- Mostrar error si existe -->
-        <% if (error) { %>
-        <div id="resultado" class="resultado error">
-            <p>❌ <%= error %></p>
-        </div>
-        <% } %>
-        
-        <div id="loading" class="loading" style="display: none;">
-            <div class="spinner"></div>
-            <p>Calculando...</p>
+
+        <!-- ========== PÁGINA 2: ÁREAS ========== -->
+        <div id="page2" class="page">
+            <div class="section-title">📐 Áreas geométricas</div>
+            <div class="card-grid">
+                <!-- Cuadrado -->
+                <div class="card">
+                    <h3>⬛ Cuadrado</h3>
+                    <div class="input-group">
+                        <label>Lado (a)</label>
+                        <input type="number" id="squareSide" value="5" step="any">
+                    </div>
+                    <button class="btn btn-primary" id="btnSquare">Calcular área</button>
+                    <div class="result-box" id="resultSquare">Área: <span>—</span></div>
+                </div>
+
+                <!-- Triángulo -->
+                <div class="card">
+                    <h3>🔺 Triángulo</h3>
+                    <div class="input-group">
+                        <label>Base (b)</label>
+                        <input type="number" id="triBase" value="8" step="any">
+                        <label>Altura (h)</label>
+                        <input type="number" id="triHeight" value="4" step="any">
+                    </div>
+                    <button class="btn btn-primary" id="btnTriangle">Calcular área</button>
+                    <div class="result-box" id="resultTriangle">Área: <span>—</span></div>
+                </div>
+
+                <!-- Círculo -->
+                <div class="card">
+                    <h3>⭕ Círculo</h3>
+                    <div class="input-group">
+                        <label>Radio (r)</label>
+                        <input type="number" id="circleRadius" value="3" step="any">
+                    </div>
+                    <button class="btn btn-primary" id="btnCircle">Calcular área</button>
+                    <div class="result-box" id="resultCircle">Área: <span>—</span></div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- JavaScript desde la carpeta public/js/ -->
-    <script src="js/script.js"></script>
+    <!-- Scripts - Ruta correcta para JS dentro de la carpeta js -->
+    <script src="/js/script.js"></script>
 </body>
 </html>

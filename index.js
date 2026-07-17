@@ -1,66 +1,89 @@
 const express = require('express');
-const cors = require('cors');
-const path = require('path');
 const app = express();
-const PORT = process.env.PORT || 3000;
+const port = 3000;
 
-// Configurar EJS como motor de plantillas
+// Configuración para usar EJS y archivos estáticos
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
-
-// Middleware
-app.use(cors());
-app.use(express.json());
+app.use(express.static('public')); // <-- Esto sirve para toda la carpeta public
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
-// Servir archivos estáticos (CSS, JS, imágenes)
-app.use(express.static('public'));
-
-// Ruta principal - Renderiza index.ejs
+// Ruta principal
 app.get('/', (req, res) => {
-    res.render('index', { 
-        titulo: 'Calculadora de Suma',
-        resultado: null,
-        error: null
-    });
+    res.render('index');
 });
 
-// Ruta para la suma (API)
-app.post('/sumar', (req, res) => {
-    try {
-        const { numero1, numero2 } = req.body;
-        
-        if (numero1 === undefined || numero2 === undefined) {
-            return res.status(400).json({ 
-                error: 'Se requieren dos números para sumar' 
-            });
-        }
-        
-        const num1 = parseFloat(numero1);
-        const num2 = parseFloat(numero2);
-        
-        if (isNaN(num1) || isNaN(num2)) {
-            return res.status(400).json({ 
-                error: 'Los valores deben ser números válidos' 
-            });
-        }
-        
-        const resultado = num1 + num2;
-        
-        res.json({
-            numero1: num1,
-            numero2: num2,
-            resultado: resultado,
-            mensaje: `La suma de ${num1} + ${num2} = ${resultado}`
-        });
-        
-    } catch (error) {
-        res.status(500).json({ error: 'Error al procesar la solicitud' });
+// ---------- ENDPOINTS PARA OPERACIONES ARITMÉTICAS ----------
+app.post('/api/calc', (req, res) => {
+    const { operation, num1, num2 } = req.body;
+    let result;
+
+    const n1 = parseFloat(num1);
+    const n2 = parseFloat(num2);
+
+    if (isNaN(n1) || isNaN(n2)) {
+        return res.status(400).json({ error: 'Ambos valores deben ser números válidos.' });
     }
+
+    switch (operation) {
+        case 'sum':
+            result = n1 + n2;
+            break;
+        case 'sub':
+            result = n1 - n2;
+            break;
+        case 'mul':
+            result = n1 * n2;
+            break;
+        case 'div':
+            if (n2 === 0) {
+                return res.status(400).json({ error: 'No se puede dividir por cero.' });
+            }
+            result = n1 / n2;
+            break;
+        default:
+            return res.status(400).json({ error: 'Operación no soportada.' });
+    }
+
+    res.json({ result });
 });
 
-// Iniciar servidor
-app.listen(PORT, () => {
-    console.log(`✅ Servidor corriendo en http://localhost:${PORT}/`);
-    console.log(`📁 Usando EJS con vistas en: ${path.join(__dirname, 'views')}`);
+// ---------- ENDPOINTS PARA ÁREAS ----------
+app.post('/api/area', (req, res) => {
+    const { shape, params } = req.body;
+    let result;
+
+    switch (shape) {
+        case 'square':
+            const side = parseFloat(params.side);
+            if (isNaN(side) || side <= 0) {
+                return res.status(400).json({ error: 'El lado debe ser un número mayor a 0.' });
+            }
+            result = side * side;
+            break;
+        case 'triangle':
+            const base = parseFloat(params.base);
+            const height = parseFloat(params.height);
+            if (isNaN(base) || isNaN(height) || base <= 0 || height <= 0) {
+                return res.status(400).json({ error: 'Base y altura deben ser números mayores a 0.' });
+            }
+            result = (base * height) / 2;
+            break;
+        case 'circle':
+            const radius = parseFloat(params.radius);
+            if (isNaN(radius) || radius <= 0) {
+                return res.status(400).json({ error: 'El radio debe ser un número mayor a 0.' });
+            }
+            result = Math.PI * radius * radius;
+            break;
+        default:
+            return res.status(400).json({ error: 'Forma no soportada.' });
+    }
+
+    res.json({ result });
+});
+
+// Iniciar el servidor
+app.listen(port, () => {
+    console.log(`✅ Servidor corriendo en http://localhost:${port}`);
 });
